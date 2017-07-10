@@ -1,0 +1,230 @@
+<div class="page-wrap padding-all">
+    <ol class="breadcrumbs margin-left">
+        <li>
+            <a href="javascript:;" [routerLink]="['/form-list']" data-test="FormEdit_LinkTo_FormList">
+                Form Builder
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;" [routerLink]="['/form-list']" data-test="FormEdit_LinkTo_FormList">
+                Form: {{existingForm?.formName}}
+            </a>
+        </li>
+    </ol>
+    <h2 class="padding-all">Form Setup</h2>
+    <snap-form-errors [forms]="[editForm]" *ngIf="submitted"></snap-form-errors>
+    <div class="row">
+        <form name="editForm" novalidate #editForm="ngForm">
+            <div class="col-xs-16 col-sm-10 col-md-7 col-lg-6 stacked-form padding-all">
+                <ul class="width-100-percent margin-bottom-2x">
+                    <li class="col-xs-16 col-sm-8 padding-right-half">
+                        <label for="formName">Form Name <abbr title="Required">*</abbr></label>
+                        <input type="text" id="formName" name="formName" title="Form Name" [(ngModel)]="existingForm.formName" data-test="FormEdit_FormName"/>
+                    </li>
+                    <li class="col-xs-16 col-sm-8 padding-left-half">
+                        <label for="formId">Form ID</label>
+                        <input type="text" id="formId" name="formId" title="Form Id" [(ngModel)]="existingForm._id" class="disabled" disabled data-test="FormEdit_FormID"/>
+                    </li>
+                    <li class="height-auto padding-bottom">
+                        <label for="formDescription">Form Description</label>
+                        <textarea rows="5" id="formDescription" name="formDescription" title="Submit URL" [(ngModel)]="existingForm.description" data-test="FormEdit_FormSubmitURL"></textarea>
+                    </li>
+                    <li class="col-xs-16 col-sm-8 padding-right-half">
+                        <label>Form Type</label>
+                        <select data-test="FormEdit_FormType" [(ngModel)]="existingForm.formType" (ngModelChange)="addFirstStep()" name="formType">
+                            <option value="accordion">Accordion</option>
+                            <option disabled value="collapsible">Collapsible Panels</option>
+                            <option selected value="standard">Standard</option>
+                            <option value="wizard">Wizard</option>
+                        </select>
+                    </li>
+                    <li class="col-xs-16 col-sm-8 padding-left-half">
+                        <fieldset>
+                            <legend>
+                                Column Layout
+                            </legend>
+
+                            <ul class="alternate-radios" data-test="FormEdit_LayoutList">
+                                <li>
+                                    <input type="radio" name="formLayout" value="oneColumn" id="formLayoutSingle" [(ngModel)]="existingForm.formLayout" data-test="FormEdit_Layout_SingleColumn"/>
+
+                                    <label for="formLayoutSingle" title="Single Column">
+                                        <span class="fa fa-bars margin-none padding-none"></span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="formLayout" id="formLayoutDouble" value="twoColumn" [(ngModel)]="existingForm.formLayout" data-test="FormEdit_Layout_DoubleColumn"/>
+
+                                    <label for="formLayoutDouble" title="2-Column">
+                                        <span class="fa fa-bars margin-none padding-none"></span>
+                                        <span class="fa fa-bars margin-none padding-none"></span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="formLayout" id="formLayoutTriple" value="threeColumn" [(ngModel)]="existingForm.formLayout" data-test="FormEdit_Layout_TripleColumn"/>
+
+                                    <label for="formLayoutTriple" title="3-Column">
+                                        <span class="fa fa-bars margin-none padding-none"></span>
+                                        <span class="fa fa-bars margin-none padding-none"></span>
+                                        <span class="fa fa-bars margin-none padding-none"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </fieldset>
+                    </li>
+                    <li class="col-xs-16 col-sm-8 padding-right-half">
+                        <label for="formTitle">Form Title</label>
+                        <input type="text" id="formTitle" name="formTitle" title="Form Title" [(ngModel)]="existingForm.formTitle" data-test="FormEdit_Title"/>
+                    </li>
+                    <li class="col-xs-16 col-sm-8 padding-left-half">
+                        <label for="submitURL">Submit URL</label>
+                        <input type="text" id="submitURL" name="submitURL" title="Submit URL" [(ngModel)]="existingForm.submitURL" data-test="FormEdit_SubmitURL"/>
+                    </li>
+                    <li class="height-auto padding-bottom" [hidden]="existingForm.formType !== 'wizard' && existingForm.formType !== 'accordion'">
+                        <h4 class="margin-top margin-bottom">Steps</h4>
+                        <table class="base-table min-cell-padding">
+                            <tbody>
+                            <tr>
+                                <td class="width-5-percent">
+                                </td>
+                                <td class="width-45-percent">
+                                    <label>Name <abbr title="Required">*</abbr></label>
+                                </td>
+                                <td>
+                                    <label>Value <abbr title="Required">*</abbr></label>
+                                </td>
+                                <td class="width-10-percent">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <!-- ngFor on below <tr> -->
+                            <tr *ngFor="let step of existingForm.steps; let i = index;">
+                                <td class="text-size-50 text-light text-center padding-top" [attr.data-test]="'AddEditSteps_StepNumber_' + i">
+                                    {{i + 1}}
+                                </td>
+                                <td>
+                                    <snap-input-wrapper [control]="editForm.controls[('stepName' + i)]" [showError]="submitted">
+                                        <input type="text" name="{{'stepName' + i}}" [attr.name]="'stepName' + i" title="Step Name" [(ngModel)]="step.name" [attr.data-test]="'AddEditSteps_StepName_' + i" required>
+                                    </snap-input-wrapper>
+                                </td>
+                                <td>
+                                    <snap-input-wrapper [control]="editForm.controls[('stepValue' + i)]" [showError]="submitted">
+                                        <input type="number" name="{{'stepValue' + i}}" [attr.name]="'stepValue' + i" title="Step Value" [(ngModel)]="step.value" [attr.data-test]="'AddEditSteps_StepValue_' + i" required>
+                                    </snap-input-wrapper>
+                                </td>
+                                <td class="padding-top">
+                                    <a href="javascript:;" class="margin-right-half margin-left-half" (click)="callDeleteStepLightbox(i)" [attr.data-test]="'AddEditSteps_DeleteStep_' + i">
+                                        <span class="fa fa-trash-o"></span>
+                                    </a>
+                                    <a href="javascript:;" (click)="addStep()" *ngIf="(i === (existingForm.steps?.length - 1))" data-test="AddEditSteps_AddStep">
+                                        <span class="fa fa-plus"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr *ngIf="!existingForm.steps || !existingForm.steps.length">
+                                <td></td>
+                                <td><a href="javascript:;" (click)="addFirstStep()">Add a step</a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li class="height-auto">
+                        <h4 class="margin-top margin-bottom">Buttons</h4>
+
+                        <table class="base-table min-cell-padding"  data-test="FormEdit_ButtonsTable">
+                            <tbody>
+                            <tr>
+                                <td class="width-20-percent">
+                                    <label>Type</label>
+                                </td>
+                                <td>
+                                    <label>Value</label>
+                                </td>
+                                <td class="width-40-percent">
+                                    <label>Function</label>
+                                </td>
+                                <td class="width-10-percent">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr *ngFor="let button of existingForm?.formButtons; let i = index;" [attr.data-test]="'FormEdit_Button_' + i">
+                                <td>
+                                    <select [(ngModel)]="button.type" [name]="'button' +  i + 'type'">
+                                        <option *ngFor="let buttonType of getTypes(button.type);" [value]="buttonType" [attr.data-test]="'FormEdit_ButtonType_' + i">{{buttonType}}</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="button.value" [name]="'button' +  i + 'val'" [attr.data-test]="'FormEdit_ButtonValue_' + i">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="button.callbackFunc" [name]="'button' +  i + 'callback'" [attr.data-test]="'FormEdit_CallbackFunction_' + i">
+                                </td>
+                                <td class="padding-top">
+                                    <a href="javascript:;" class="margin-right-half margin-left-half" (click)="callDeleteButtonLightbox(i)" *ngIf="i !== 0" [attr.data-test]="'FormEdit_DeleteButton_' + i">
+                                        <span class="fa fa-trash-o"></span>
+                                    </a>
+                                    <a href="javascript:;" (click)="addButton()" *ngIf="(getTypes().length && (i === (existingForm?.formButtons?.length - 1)))" data-test="FormEdit_AddButton">
+                                        <span class="fa fa-plus"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+                <div class="button-row">
+                    <button type="button" class="tertiary-button" (click)="updateForm(false, editForm.valid)" data-test="FormEdit_SaveAndReturn">
+                        Save & Return
+                    </button>
+                    <button type="button" class="primary-button" (click)="updateForm(true, editForm.valid)" data-test="FormEdit_SaveAndSetupFields">
+                        Save &amp; Setup Fields
+                    </button>
+                    <button type="button" class="cancel-button" (click)="cancel()" data-test="FormEdit_CancelEdit">
+                        <span class="icon"></span>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+            <div class="col-xs-16 col-sm-6 col-md-9 col-lg-10 padding-all-2x">
+                <p class="row margin-top-half">
+                    <label class="callout-label col-xs-6 col-sm-6 col-md-5 col-lg-4">
+                        Created
+                        <span class="callout-label-value" data-test="FormEdit_CreationDate">
+						{{existingForm.createdDate | date}}
+						</span>
+                    </label>
+                    <span class="float-left padding-top-half padding-left" data-test="FormEdit_CreatedBy">
+						{{existingForm.createdBy || 'Anonymous User'}}
+					</span>
+                </p>
+                <p class="row margin-top-half">
+                    <label class="callout-label col-xs-6 col-sm-6 col-md-5 col-lg-4">
+                        Modified
+                        <span class="callout-label-value" data-test="FormEdit_LastModifiedDate">
+						{{existingForm.updatedDate | date}}
+						</span>
+                    </label>
+                    <span class="float-left padding-top-half padding-left" data-test="FormEdit_LastModifiedBy">
+						{{existingForm.updatedBy || 'Anonymous User'}}
+					</span>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+<snap-lightbox-container>
+    <snap-confirmation-box
+        boxId="delete-button-confirmation"
+        boxTitle="Delete Button"
+        boxType="action"
+        (onYesOk)="deleteButton()">
+        Are you sure you want to delete this button?
+    </snap-confirmation-box>
+    <snap-confirmation-box
+        boxId="delete-step-confirmation"
+        boxTitle="Delete Step"
+        boxType="action"
+        (onYesOk)="deleteStep()">
+        Are you sure you want to delete this step?
+    </snap-confirmation-box>
+</snap-lightbox-container>

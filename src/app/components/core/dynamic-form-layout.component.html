@@ -1,0 +1,75 @@
+<form [formGroup]="form" data-test="FormLayout">
+    <div class="stacked-form drag-and-drop" [ngClass]="{'grid-size-12': existingForm?.formLayout === 'threeColumn'}">
+        <!--STANDARD FORM-->
+        <ul *ngIf="existingForm?.formType === 'standard'" class="width-100-percent" [dragula]='"drag-quote-lines"' [dragulaOptions]="dragulaOptions" [dragulaModel]='fields'>
+            <li *ngFor="let field of fields; let i = index"
+                [ngClass]="{
+                'field-help': field.hasHelperText,
+                'col-xs-16': existingForm?.formLayout === 'twoColumn',
+                'col-sm-8': existingForm?.formLayout === 'twoColumn' && field.colSpan !== 'two',
+                'col-xs-12': existingForm?.formLayout === 'threeColumn',
+                'col-sm-4': existingForm?.formLayout === 'threeColumn' && field.colSpan !== 'three',
+                'height-2-rows': (field.controlType === 'textarea') && (field.numRows === 2),
+                'height-3-rows': (field.controlType === 'textarea') && (field.numRows === 3)}"
+                [attr.data-test]="'FormLayout_Field_' + i">
+                <div class="row drag-node" [ngClass]="{'edit': editedField === field, 'height-auto': field.controlType === 'radio' && field.stacked || field.controlType === 'checkboxes' || field.controlType === 'fileupload'}">
+                    <div class="col-xs-1">
+                        <span class="drag-handle" [attr.data-test]="'FormLayout_Field_' + i + '_DragHandle'"></span>
+                    </div>
+                    <div [ngClass]="{'col-xs-13': existingForm?.formLayout !== 'threeColumn', 'col-xs-9': existingForm?.formLayout === 'threeColumn'}" [attr.data-test]="'FormLayout_Field_' + i + '_RenderedField'">
+                        <df-field [field]="field" [form]="form" [callbackFunc]="callbackFunc" [submitted]="submitted" [showHidden]="true"></df-field>
+                    </div>
+                    <div class="col-xs-2">
+                        <a href="javascript:;" class="float-right" (click)="removeField(field)" [attr.data-test]="'FormLayout_RemoveField_' + i">
+                            <span class="fa fa-trash-o"></span>
+                        </a>
+                        <a href="javascript:;" class="float-right margin-right" (click)="editField(field)" [attr.data-test]="'FormLayout_EditField_' + i">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!--/STANDARD FORM-->
+        <!--WIZARD FORM-->
+        <ul *ngIf="existingForm?.formType === 'wizard'" class="width-100-percent">
+            <li>
+                <label for="wizardSteps">Select Wizard Step to Preview</label>
+                <select name="wizardSteps" id="wizardSteps" [(ngModel)]="selectedStep" [ngModelOptions]="{standalone: true}">
+                    <option *ngFor="let step of existingForm.steps" [ngValue]="step.value">{{step.name}}</option>
+                </select>
+            </li>
+        </ul>
+        <ul *ngIf="existingForm?.formType === 'wizard'" class="width-100-percent" [dragula]='"drag-quote-lines"' [dragulaOptions]="dragulaOptions" [dragulaModel]='fields'>
+            <li *ngFor="let field of fields; let i = index"
+                [hidden]="field.step !== selectedStep"
+                [ngClass]="{
+                'field-help': field.hasHelperText,
+                'col-xs-16': existingForm?.formLayout === 'twoColumn',
+                'col-sm-8': existingForm?.formLayout === 'twoColumn' && field.colSpan !== 'two',
+                'col-xs-12': existingForm?.formLayout === 'threeColumn',
+                'col-sm-4': existingForm?.formLayout === 'threeColumn' && field.colSpan !== 'three',
+                'height-2-rows': (field.controlType === 'textarea') && (field.numRows === 2),
+                'height-3-rows': (field.controlType === 'textarea') && (field.numRows === 3)}"
+                [attr.data-test]="'FormLayout_Field_' + i">
+                <div class="row drag-node" [ngClass]="{'edit': editedField === field, 'height-auto': field.controlType === 'radio' && field.stacked || field.controlType === 'checkboxes' || field.controlType === 'fileupload'}">
+                    <div class="col-xs-1">
+                        <span class="drag-handle" [attr.data-test]="'FormLayout_Field_' + i + '_DragHandle'"></span>
+                    </div>
+                    <div [ngClass]="{'col-xs-13': existingForm?.formLayout !== 'threeColumn', 'col-xs-9': existingForm?.formLayout === 'threeColumn'}" [attr.data-test]="'FormLayout_Field_' + i + '_RenderedField'">
+                        <df-field [field]="field" [form]="form" [callbackFunc]="callbackFunc" [submitted]="submitted" [showHidden]="true"></df-field>
+                    </div>
+                    <div class="col-xs-2">
+                        <a href="javascript:;" class="float-right" (click)="removeField(field)" [attr.data-test]="'FormLayout_RemoveField_' + i">
+                            <span class="fa fa-trash-o"></span>
+                        </a>
+                        <a href="javascript:;" class="float-right margin-right" (click)="editField(field)" [attr.data-test]="'FormLayout_EditField_' + i">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!--/WIZARD FORM-->
+    </div>
+</form>

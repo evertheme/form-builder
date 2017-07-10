@@ -1,0 +1,52 @@
+<form [formGroup]="form">
+    <div class="stacked-form" [ngClass]="{'grid-size-12': existingForm?.formLayout === 'threeColumn'}">
+        <!--STANDARD FORM-->
+        <ul *ngIf="existingForm?.formType === 'standard'" class="width-100-percent">
+            <li *ngFor="let field of fields; let i = index"
+                class="padding-all-half"
+                [ngClass]="{
+                    'field-help': field.hasHelperText,
+                    'col-xs-16': existingForm?.formLayout === 'twoColumn',
+                    'col-sm-8': existingForm?.formLayout === 'twoColumn' && field.colSpan !== 'two',
+                    'col-xs-12': existingForm?.formLayout === 'threeColumn',
+                    'col-sm-4': existingForm?.formLayout === 'threeColumn' && field.colSpan !== 'three',
+                    'height-auto': field.controlType === 'textarea' || (field.controlType === 'radio' && field.stacked) || field.controlType === 'checkboxes' || field.controlType === 'fileupload' || field.controlType === 'header'}"
+                data-test="'ViewFormLayoutModalField_' + i">
+                <div class="row">
+                    <df-field [field]="field" [form]="form" [callbackFunc]="callbackFunc" [submitted]="submitted"></df-field>
+                </div>
+            </li>
+        </ul>
+        <!--/STANDARD FORM-->
+        <!--WIZARD FORM-->
+        <ul *ngIf="existingForm?.formType === 'wizard'" class="width-100-percent">
+            <li *ngFor="let field of fields; let i = index"
+                [hidden]="field.step !== currentStep"
+                class="padding-all-half"
+                [ngClass]="{
+                    'field-help': field.hasHelperText,
+                    'col-xs-16': existingForm?.formLayout === 'twoColumn',
+                    'col-sm-8': existingForm?.formLayout === 'twoColumn' && field.colSpan !== 'two',
+                    'col-xs-12': existingForm?.formLayout === 'threeColumn',
+                    'col-sm-4': existingForm?.formLayout === 'threeColumn' && field.colSpan !== 'three',
+                    'height-auto': field.controlType === 'textarea' || (field.controlType === 'radio' && field.stacked) || field.controlType === 'checkboxes' || field.controlType === 'fileupload' || field.controlType === 'header'}"
+                data-test="'ViewFormLayoutModalField_' + i">
+                <div class="row">
+                    <df-field [field]="field" [form]="form" [callbackFunc]="callbackFunc" [submitted]="submitted"></df-field>
+                </div>
+            </li>
+        </ul>
+        <div class="button-row" [hidden]="customSteps?.length">
+            <button type="button" class="secondary-button" (click)="previousPage()" *ngIf="existingForm?.formType === 'wizard'" data-test="CreateRequest_PreviousPage"
+                    [ngStyle]="{ visibility: (currentStep === 1) ? 'hidden' : 'visible' }">
+                Previous
+            </button>
+            <button type="button" class="secondary-button" (click)="nextPage()" *ngIf="existingForm?.formType === 'wizard'" data-test="CreateRequest_NextPage"
+                    [ngStyle]="{ visibility: (currentStep === existingForm?.steps?.length) ? 'hidden' : 'visible' }">
+                Next
+            </button>
+        </div>
+        <!--/WIZARD FORM-->
+    </div>
+    <!-- Dynamic Buttons Will Go Here -->
+</form>

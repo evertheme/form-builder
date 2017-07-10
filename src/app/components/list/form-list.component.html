@@ -1,0 +1,80 @@
+<div class="page-wrap padding-all-2x">
+    <div class="row margin-bottom-2x">
+        <h1 class="float-left">Form Builder</h1>
+        <button type="button" class="secondary-button float-right margin-top-half" (click)="addNewForm()" data-test="FormList_addNewForm">
+            <span class="fa fa-plus margin-right-min"></span>
+            New Form
+        </button>
+    </div>
+    <div class="rounded-content-box">
+        <table class="base-table alternate-row-color interactive-rows" data-test="FormList_FormTable">
+            <tbody>
+            <tr>
+                <th class="width-18-percent">
+                    Name
+                </th>
+                <th>
+                    Description
+                </th>
+                <th class="width-18-percent">
+                    Created
+                </th>
+                <th class="width-18-percent">
+                    Modified
+                </th>
+                <th class="width-22-percent">&nbsp;</th>
+            </tr>
+            <tr *ngFor="let form of forms; let i = index">
+                <td>
+                    <a href="javascript:;" (click)="editExistingForm(form._id)" [attr.data-test]="'FormList_EditForm_' + i">
+                        {{form.formName}}
+                        <span class="fa fa-pencil-square-o"></span>
+                    </a>
+                </td>
+                <td [attr.data-test]="'FormList_Description_' + i">
+                    {{form.description}}
+                </td>
+                <td [attr.data-test]="'FormList_CreatedDate_' + i">
+                    {{form.createdBy}}
+                </td>
+                <td [attr.data-test]="'FormList_ModifiedDate_' + i">
+                    {{form.updatedBy}}
+                </td>
+                <td>
+                    <a href="javascript:;" class="margin-right-2x" (click)="buildFields(form._id)" [attr.data-test]="'FormList_BuildFields_' + i">
+                        <span class="fa fa-pencil-square-o"></span>
+                        Edit Fields
+                    </a>
+                    <a href="javascript:;" class="margin-right-2x" (click)="openConfirmation(form._id)" [attr.data-test]="'FormList_DeleteForm_' + i">
+                        <span class="fa fa-trash-o"></span>
+                        Delete
+                    </a>
+                    <a href="javascript:;" class="margin-right-2x" (click)="openFormModal(form._id)" [attr.data-test]="'FormList_PreviewForm_' + i">
+                        <span class="fa fa-eye"></span>
+                        Preview Form
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<snap-lightbox-container>
+    <snap-confirmation-box
+        boxId="delete-form-confirmation"
+        boxTitle="Delete Form"
+        boxType="action"
+        (onYesOk)="deleteForm()">
+        Are you sure you want to delete this form?
+    </snap-confirmation-box>
+
+    <snap-light-box boxId="preview-form-modal" boxTitle="Form Preview" boxType="right" rightClass="col-xs-16 col-sm-12 col-md-9 col-lg-8">
+        <template>
+            <preview-form
+                modalId="preview-form-modal"
+                [formId]="formId">
+            </preview-form>
+        </template>
+    </snap-light-box>
+</snap-lightbox-container>

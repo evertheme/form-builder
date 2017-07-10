@@ -1,0 +1,154 @@
+[
+    {
+        "key": "dyn1",
+        "label": "Dynamic Control",
+        "order": 3,
+        "controlType": "dropdown",
+        "source": {
+            "method":"GET",
+            "serviceUrl" : "https://jsonplaceholder.typicode.com/posts",
+            "arrayRef" : "",
+            "valueField":"id",
+            "textField":"title"
+        },
+        "onModelChange": "onModelChange"
+    },
+    {
+        "key": "myradio",
+        "label": "Radio",
+        "order": 3,
+        "controlType": "radio",
+        "model": "Solid",
+        "source": {
+            "method":"GET",
+            "serviceUrl" : "https://jsonplaceholder.typicode.com/users",
+            "arrayRef" : "company",
+            "valueField":"bs",
+            "textField":"name"
+        }
+    },
+    {
+        "key": "fullName",
+        "controlType": "group",
+        "label": "Full Name",
+        "questions": [
+            {
+                "value": "Bombasto",
+                "key": "firstName",
+                "label": "First name",
+                "formControls": [
+                    { "validator": "required" },
+                    { "validator": "minLength", "value": 2 },
+                    { "validator": "maxLength", "value": 5 }
+                ],
+                "order": 1,
+                "controlType": "textbox"
+            },
+            {
+                "value": "Vardi",
+                "key": "lastName",
+                "label": "Last name",
+                "formControls": [
+                    { "validator": "required" },
+                    { "validator": "minLength", "value": 2 },
+                    { "validator": "maxLength", "value": 5 }
+                ],
+                "order": 1,
+                "controlType": "textbox"
+            },
+            {
+                "controlType": "group",
+                "key": "address",
+                "label": "Address",
+                "questions": [
+                    {
+                        "value": "",
+                        "key": "street",
+                        "label": "Street",
+                        "formControls": [
+                            { "validator": "required" },
+                            { "validator": "minLength", "value": 2 },
+                            { "validator": "maxLength", "value": 5 }
+                        ],
+                        "order": 1,
+                        "controlType": "textbox"
+                    },
+                    {
+                        "value": "",
+                        "key": "number",
+                        "label": "Number",
+                        "formControls": [
+                            { "validator": "required" },
+                            { "validator": "minLength", "value": 2 },
+                            { "validator": "maxLength", "value": 5 }
+                        ],
+                        "order": 1,
+                        "controlType": "textbox"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "key": "lastName",
+        "value": false,
+        "label": "Last name",
+        "formControls": [
+            { "validator": "required" }
+        ],
+        "order": 1,
+        "controlType": "checkbox"
+    },
+    {
+        "key": "emailAddress",
+        "label": "Email",
+        "order": 2,
+        "controlType": "textbox",
+        "type": "email"
+    },
+    {
+        "key": "reseller",
+        "label": "Reseller Name",
+        "controlType": "combobox",
+        "order": 5,
+        "lookupFunction": "getResellerName",
+        "openLookupModal": "openLightbox",
+        "model": "",
+        "formControls": [
+            { "validator": "custom", "value": "resellerNameControl" }
+        ],
+        "onModelChange": "onModelChangeAsynchronous"
+    },
+    {
+        "key": "selection",
+        "controlType": "group",
+        "label": "Dynamic Selection",
+        "questions": [
+            {
+                "key": "region",
+                "label": "Region",
+                "controlType": "dropdown",
+                "onModelChange": "onSelectRegion",
+                "model": "",
+                "options": [{"key": "133", "value": "Canada"}, {"key": "103", "value": "United States of America"}]
+            },
+            {
+                "key": "states",
+                "label": "States",
+                "controlType": "dropdown",
+                "onModelChange": "onSelectStates",
+                "model": "",
+                "options": [],
+                "hidden": true
+            }
+        ],
+        "order": 6
+    },
+    {
+        "key": "startDate",
+        "label": "Date",
+        "controlType": "datepicker",
+        "model": "02/12/2017",
+        "order": 10
+    }
+]

@@ -1,0 +1,42 @@
+<div class="lightbox-body" data-test="LOVLookup">
+    <div class="row stacked-form">
+        <ul class="col-xs-10 padding-right">
+            <li>
+                <label data-test="LOVLookup_Label">{{label}}</label>
+                <input class="modal-focus" type="text" [(ngModel)]="searchStr">
+            </li>
+        </ul>
+        <ul class="col-xs-6 padding-left">
+            <li class="button-only">
+                <button type="button" class="primary-button" (click)="findData()" data-test="LOVLookup_SearchButton">Search</button>
+            </li>
+        </ul>
+    </div>
+
+    <div *ngIf="showResults" class="scrollable height-80-percent" data-test="LOVLookup_SearchResults">
+        <!-- Selection Table -->
+        <table class="selection-table">
+            <tbody>
+            <tr *ngIf="lookupResults.length === 0 && lookupComplete" data-test="LOVLookup_Status">
+                <td pageSizespan=2>{{lookupStatus}}</td>
+            </tr>
+            <tr *ngFor="let lookupResult of lookupResults; let i = index">
+                <td>
+                    <button type="button" class="quick-action-button text-size-200" title="Select" current-state="closeMe" (click)="handleSelect(lookupResult)" [attr.data-test]="'LOVLookup_SelectResult_' + i">
+                        <span class="fa fa-angle-double-right"></span>
+                    </button>
+                </td>
+                <td *ngIf="isStringArray" [attr.data-test]="'LOVLookup_SingleResult_' + i">{{lookupResult}}</td>
+                <template [ngIf]="!isStringArray">
+                    <td *ngFor="let result of arrayOfKeys">{{lookupResult[result]}}</td>
+                </template>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="button-row">
+    <button type="button" class="cancel-button" (click)="cancel()" data-test="LOVLookup_CancelLookupButton"><span class="icon"></span> Cancel</button>
+</div>
+
+<snap-status-spinner [spinnerKey]="modalId + 'Spinner'" [delayIn]="delayIn" [delayOut]="delayOut" [isNested]="true"></snap-status-spinner>

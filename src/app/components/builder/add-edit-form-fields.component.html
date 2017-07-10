@@ -1,0 +1,389 @@
+<snap-form-errors [forms]="[addEditFormField]" *ngIf="submitted" data-test="AddEditFormFields_SnapFormErrors"></snap-form-errors>
+
+<form name="addEditFormField" id="addEditFormField" class="stacked-form" [formGroup]="addEditFormField" novalidate data-test="AddEditFormFields_Form">
+        <ul class="width-100-percent">
+            <li class="padding-right-half">
+                <label for="controlType">Component Type</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['controlType']" [showError]="submitted">
+                    <select formControlName="controlType" id="controlType" name="controlType" title="Control Type" [(ngModel)]="selectedControlType"
+                            (ngModelChange)="setupOptions()"
+                            [hidden]="isEditing" data-test="AddEditFormFields_ControlTypeSelection">
+                        <option value="" selected>- Select -</option>
+                        <optgroup label="Header">
+                             <option value="header">Group Header</option>
+                        </optgroup>
+                        <optgroup label="Blank">
+                             <option value="blank">Blank</option>
+                        </optgroup>
+                        <optgroup label="Input">
+                            <option value="textbox">Text Field</option>
+                            <option value="textarea">Text Area</option>
+                            <option value="combobox">Auto-Suggest</option>
+                            <option value="fileupload">File Upload</option>
+                        </optgroup>
+                        <optgroup label="Single-Select">
+                            <option value="radio">Radio Buttons</option>
+                            <option value="dropdown">Select Dropdown</option>
+                            <option value="checkbox">Single Checkbox</option>
+                            <option>Switch</option>
+                        </optgroup>
+                        <optgroup label="Multi-Select">
+                            <option value="checkboxes">Checkboxes</option>
+                            <option>Multi-Select Dropdown</option>
+                        </optgroup>
+                        <optgroup label="Pickers">
+                            <option value="datepicker">Date Picker</option>
+                        </optgroup>
+                    </select>
+                </snap-input-wrapper>
+                <div [hidden]="!isEditing" data-test="AddEditFormFields_SelectedControlType">{{selectedControlType}}</div>
+            </li>
+            <li class="height-auto padding-bottom text-light">
+                Use when the user needs to select one item from a list containing less than 40 options. A default selection may be set.
+            </li>
+            <li class="col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'blank'">
+                <label for="label">Label<sup class="text-size-50 text-red">*</sup></label>
+                <snap-input-wrapper [control]="addEditFormField.controls['label']" [showError]="submitted">
+                    <input formControlName="label" type="text" class="form-control" id="label" name="label" title="Label" data-test="AddEditFormFields_LabelInput" [required]="selectedControlType !== 'blank'">
+                </snap-input-wrapper>
+            </li>
+            <li class="col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'blank'">
+                <label for="key">Field ID<sup class="text-size-50 text-red">*</sup></label>
+                <snap-input-wrapper [control]="addEditFormField.controls['key']" [showError]="submitted">
+                    <input formControlName="key" type="text" class="form-control" id="key" name="key" title="Key" [(ngModel)]="keyValue" [hidden]="isEditing" data-test="AddEditFormFields_KeyInput" [required]="selectedControlType !== 'blank'">
+                </snap-input-wrapper>
+                <div [hidden]="!isEditing"  data-test="AddEditFormFields_KeyValue">{{keyValue}}</div>
+            </li>
+            <li class="col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'header' || selectedControlType === 'blank'">
+                <label for="model">Model</label>
+                <input formControlName="model" type="text" class="form-control" id="model" name="model" data-test="AddEditFormFields_ModelInput">
+            </li>
+            <li class="col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'header' || selectedControlType === 'blank'">
+                <label for="onModelChange">On Model Change
+                    <sup class="text-size-50 text-red" [hidden]="selectedControlType !== 'dropdown' || selectedControlType !== 'combobox'">*</sup>
+                </label>
+                <snap-input-wrapper [control]="addEditFormField.controls['onModelChange']" [showError]="submitted">
+                    <input formControlName="onModelChange" type="text" class="form-control" id="onModelChange" name="onModelChange" title="On Model Change" [(ngModel)]="onModelChange" data-test="AddEditFormFields_OnModelChangeInput">
+                </snap-input-wrapper>
+            </li>
+            <li class="col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'header' || selectedControlType === 'blank'">
+                <label for="title">Title</label>
+                <input formControlName="title" type="text" class="form-control" id="title" name="title" data-test="AddEditFormFields_TitleInput">
+            </li>
+            <li class="height-auto" [hidden]="selectedControlType === 'header' || selectedControlType === 'fileupload' || selectedControlType === 'blank'">
+                <h4 class="margin-bottom">Attributes</h4>
+                <ul>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half">
+                        <label>
+                            <input type="checkbox" class="form-control" id="hasHelperText" [(ngModel)]="hasHelperTextCheck" formControlName="hasHelperText" data-test="AddEditFormFields_HasHelperTextCheckbox">
+                            Helper Text
+                        </label>
+                        <input [(ngModel)]="helperText" formControlName="helperText" type="text" class="form-control" id="helperText" name="helperText" data-test="AddEditFormFields_HelperTextInput">
+                    </li>
+                     <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half"
+                     [hidden]="selectedControlType !== 'textbox' && selectedControlType !== 'textarea'">
+                        <label>
+                            <input type="checkbox" class="form-control" id="hasPlaceholderText" [(ngModel)]="hasPlaceholderTextCheck" formControlName="hasPlaceholderText" data-test="AddEditFormFields_HasPlaceholdeTextCheckbox">
+                            Placeholder Text
+                        </label>
+                        <input [(ngModel)]="placeholderText" formControlName="placeholderText" type="text" class="form-control" id="placeholderText" name="placeholderText" data-test="AddEditFormFields_PlaceholderTextInput">
+                    </li>
+                </ul>
+            </li>
+            <li class="height-auto" [hidden]="selectedControlType === 'header' || selectedControlType === 'checkbox' || selectedControlType === 'checkboxes' || selectedControlType === 'radio' || selectedControlType === 'blank'">
+                <h4 class="margin-bottom">Validations</h4>
+                <ul class="row" data-test="AddEditFormFields_ValidationsList">
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half">
+                        <label>
+                            <input type="checkbox" class="form-control" id="required" name="required" [(ngModel)]="formControls.required" formControlName="requiredCheck" data-test="AddEditFormFields_Validation_RequiredCheckbox">
+                            Required
+                        </label>
+                    </li>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'dropdown' || selectedControlType === 'datepicker' || selectedControlType === 'fileupload'">
+                        <label for="minLength">
+                            <input type="checkbox" class="form-control" id="minLength" name="minLength" [(ngModel)]="formControls.minLength" formControlName="minLthCheck" data-test="AddEditFormFields_Validation_MinLengthCheckbox">
+                            Min Length
+                            <input [hidden]="!formControls.minLength" type="number" class="form-control" [(ngModel)]="minLengthVal" formControlName="minLthValue" data-test="AddEditFormFields_Validation_MinLengthInput">
+                        </label>
+                    </li>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'dropdown' || selectedControlType === 'datepicker' || selectedControlType === 'fileupload'">
+                        <label for="maxLength">
+                            <input type="checkbox" class="form-control" id="maxLength" name="maxLength" [(ngModel)]="formControls.maxLength" formControlName="maxLthCheck" data-test="AddEditFormFields_Validation_MaxLengthCheckbox">
+                            Max Length
+                            <input [hidden]="!formControls.maxLength" type="number" class="form-control" [(ngModel)]="maxLengthVal" formControlName="maxLthValue" data-test="AddEditFormFields_Validation_MaxLengthInput">
+                        </label>
+                    </li>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'dropdown' || selectedControlType === 'fileupload'">
+                        <label for="pattern">
+                            <input type="checkbox" class="form-control" id="pattern" name="pattern" [(ngModel)]="formControls.pattern" formControlName="patternCheck" data-test="AddEditFormFields_Validation_PatternCheckbox">
+                            Pattern
+                            <input [hidden]="!formControls.pattern" type="text" class="form-control" [(ngModel)]="patternVal" formControlName="patternValue" data-test="AddEditFormFields_Validation_PatternInput">
+                        </label>
+                    </li>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half" [hidden]="selectedControlType === 'dropdown' || selectedControlType === 'datepicker' || selectedControlType === 'fileupload'">
+                        <label for="custom">
+                            <input type="checkbox" class="form-control" id="custom" name="custom" [(ngModel)]="formControls.custom" formControlName="customCheck" data-test="AddEditFormFields_Validation_CustomCheckbox">
+                            Custom
+                            <input [hidden]="!formControls.custom" type="text" class="form-control" [(ngModel)]="customVal" formControlName="customValue" data-test="AddEditFormFields_Validation_CustomInput">
+                        </label>
+                    </li>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half"></li>
+                    <li class="height-auto margin-bottom col-xs-16 col-sm-8 padding-right-half"></li>
+                </ul>
+            </li>
+            <li [hidden]="selectedControlType !== 'radio'">
+                <fieldset>
+                    <legend>Layout</legend>
+                    <ul class="alternate-radios">
+                        <li>
+                            <input type="radio" name="radioLayout" id="radioLayoutInline" [(ngModel)]="stacked" [ngModelOptions]="{standalone: true}" [value]="false">
+                            <label for="radioLayoutInline">Inline</label>
+                        </li>
+                        <li>
+                            <input type="radio" name="radioLayout" id="radioLayoutStacked" [(ngModel)]="stacked" [ngModelOptions]="{standalone: true}" [value]="true">
+                            <label for="radioLayoutStacked">Stacked</label>
+                        </li>
+                    </ul>
+                </fieldset>
+            </li>
+            <li class="height-auto padding-bottom" [hidden]="selectedControlType !== 'checkbox' && selectedControlType !== 'checkboxes' && selectedControlType !== 'radio' && selectedControlType !== 'dropdown'">
+                <h4 class="margin-bottom">Options</h4>
+                <fieldset>
+                    <ul class="alternate-radios" data-test="AddEditFormFields_SourceTypes">
+                        <li *ngFor="let sourceType of sourceTypes">
+                            <input type="radio" name="sourceType" id="{{sourceType.value}}" formControlName="sourceType" [value]="sourceType.name" [(ngModel)]="selectedSourceType" [attr.data-test]="'AddEditFormFields_SourceType_' + sourceType.value">
+
+                            <label for="{{sourceType.value}}" [attr.data-test]="'AddEditFormFields_SourceType_' + sourceType.value + '_Label'">
+                                {{sourceType.name}}
+                            </label>
+                        </li>
+                    </ul>
+                </fieldset>
+            </li>
+            <li [hidden]="selectedSourceType !== 'Dynamic'" class="padding-right-half">
+                <label for="method">Method</label>
+                <select name="method" id="method" [(ngModel)]="serviceMethod" [ngModelOptions]="{standalone: true}" data-test="AddEditFormFields_ServiceMethodSelect">
+                    <option value="GET" data-test="AddEditFormFields_ServiceMethodSelect_GET">GET</option>
+                    <option value="POST" data-test="AddEditFormFields_ServiceMethodSelect_POST">POST</option>
+                </select>
+            </li>
+            <li [hidden]="selectedSourceType !== 'Dynamic'" class="col-xs-16 col-sm-8 padding-right-half">
+                <label for="url">URL</label>
+                <input type="text" class="form-control" id="url" name="url" [(ngModel)]="serviceUrl" [ngModelOptions]="{standalone: true}" data-test="AddEditFormFields_ServiceURLInput">
+            </li>
+            <li [hidden]="selectedSourceType !== 'Dynamic'" class="col-xs-16 col-sm-8 padding-right-half">
+                <label for="array-reference">Array Reference</label>
+                <input type="text" class="form-control" id="array-reference" name="array-reference" [(ngModel)]="arrayRef" [ngModelOptions]="{standalone: true}" data-test="AddEditFormFields_ArrayReferenceInput">
+            </li>
+            <li [hidden]="selectedSourceType !== 'Dynamic'" class="col-xs-16 col-sm-8 padding-right-half">
+                <label for="text-field">Option Field</label>
+                <input type="text" class="form-control" id="text-field" name="text-field" [(ngModel)]="textField" [ngModelOptions]="{standalone: true}" data-test="AddEditFormFields_OptionInput">
+            </li>
+            <li [hidden]="selectedSourceType !== 'Dynamic'" class="col-xs-16 col-sm-8 padding-right-half">
+                <label for="value-field">Value Field</label>
+                <input type="text" class="form-control" id="value-field" name="value-field" [(ngModel)]="valueField" [ngModelOptions]="{standalone: true}" data-test="AddEditFormFields_ValueInput">
+            </li>
+            <li [hidden]="selectedSourceType !== 'Dynamic' || serviceMethod !== 'POST'" class="height-auto padding-right-half">
+                <label for="payload">Payload</label>
+                <textarea name="payload" id="payload" rows="10" [(ngModel)]="payloadField" [ngModelOptions]="{standalone: true}" data-test="AddEditFormFields_PayloadTextarea"></textarea>
+            </li>
+            <li class="height-auto margin-bottom-half" [hidden]="selectedControlType === 'header'">
+                <label for="hidden">
+                    <input formControlName="hidden" type="checkbox" class="form-control" id="hidden" name="hidden" data-test="AddEditFormFields_HiddenCheckbox">
+                    Hidden
+                </label>
+            </li>
+            <li [hidden]="selectedControlType !== 'textbox'">
+                <label for="textboxType">Textbox Type</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['textboxType']" [showError]="submitted">
+                    <select name="textboxType" id="textboxType" formControlName="textboxType" title="Textbox Type" [(ngModel)]="selectedTextBoxType"  data-test="AddEditFormFields_InputTypeSelect">
+                        <option *ngFor="let inputType of inputTypes" [value]="inputType" [attr.data-test]="'AddEditFormFields_InputTypeOption' + inputType">{{inputType}}</option>
+                    </select>
+                </snap-input-wrapper>
+            </li>
+            <li class="height-auto margin-bottom-half" [hidden]="selectedSourceType === 'Dynamic' || selectedControlType !== 'checkbox' && selectedControlType !== 'checkboxes' && selectedControlType !== 'dropdown' && selectedControlType !== 'radio'" data-test="AddEditFormFields_StaticOptions">
+                <table class="base-table min-cell-padding">
+                    <tbody>
+                    <tr>
+                        <td class="width-18-percent text-center">
+                            <label>Default</label>
+                        </td>
+                        <td>
+                            <label>Option</label>
+                        </td>
+                        <td>
+                            <label>Value</label>
+                        </td>
+                        <td class="width-5-percent">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr *ngFor="let option of options; let i = index">
+                        <td class="padding-top-half text-center">
+                            <span class="text-light text-size-50 padding-right-half">
+                                {{i + 1}}
+                            </span>
+                            <input type="radio" name="value" [(ngModel)]="selectedDefaultOption" (click)="setDefaultOption(option)" [ngModelOptions]="{standalone: true}" [value]="option.key" data-test="AddEditFormFields_ValueInput" />
+                        </td>
+                        <td>
+                            <input type="text" name="valueOptions" [(ngModel)]="option.value" [ngModelOptions]="{standalone: true}" [attr.data-test]="'AddEditFormFields_StaticOptionValueInput_'+i" />
+                        </td>
+                        <td>
+                            <input type="text" name="keyOptions" [(ngModel)]="option.key" [ngModelOptions]="{standalone: true}" [attr.data-test]="'AddEditFormFields_StaticOptionKeyInput_'+i" />
+                        </td>
+                        <td [hidden]="(i + 1) === options?.length">
+                            &nbsp;
+                        </td>
+                        <td class="padding-top text-center" [hidden]="((i + 1) !== options?.length) || selectedControlType === 'checkbox'">
+                            <a href="javascript:;" (click)="addNewOption()" data-test="AddEditFormFields_AddStaticOption">
+                                <span class="fa fa-plus"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </li>
+            <li [hidden]="selectedControlType !== 'textarea'">
+                <label for="numRows">Number of Rows</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['numRows']" [showError]="submitted">
+                    <input formControlName="numRows" type="number" class="form-control" id="numRows" name="numRows" title="Number of Rows" data-test="AddEditFormFields_NumRowsInput">
+                </snap-input-wrapper>
+            </li>
+            <li class="height-auto padding-bottom text-light" [hidden]="selectedControlType !== 'combobox'">
+                List of comma separated field props
+            </li>
+            <li [hidden]="selectedControlType !== 'combobox'">
+                <label for="resultFields">Result Fields</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['resultFields']" [showError]="submitted">
+                    <input formControlName="resultFields" type="text" class="form-control" id="resultFields" name="resultFields"
+                           title="Result Fields" [(ngModel)]="resultFields" data-test="AddEditFormFields_ResultFieldsInput">
+                </snap-input-wrapper>
+            </li>
+            <li [hidden]="selectedControlType !== 'combobox'">
+                <label for="lookupFunction">Lookup Function</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['lookupFunction']" [showError]="submitted">
+                    <input formControlName="lookupFunction" type="text" class="form-control" id="lookupFunction" name="lookupFunction"
+                           title="Lookup Function" [(ngModel)]="lookupFunction" data-test="AddEditFormFields_LookupFunctionInput">
+                </snap-input-wrapper>
+            </li>
+            <li [hidden]="selectedControlType !== 'combobox'">
+                <label for="openLookupModal">Open Lookup Modal Function</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['openLookupModal']" [showError]="submitted">
+                    <input formControlName="openLookupModal" type="text" class="form-control" id="openLookupModal" name="openLookupModal"
+                           title="Open Lookup Modal Function" [(ngModel)]="openLookupModal"  data-test="AddEditFormFields_LookupModalFunctionInput">
+                </snap-input-wrapper>
+            </li>
+             <li [hidden]="existingForm?.formType !== 'wizard' && existingForm?.formType !== 'accordion'">
+                <label for="step">Select Step Reference<sup class="text-size-50 text-red">*</sup></label>
+                <snap-input-wrapper [control]="addEditFormField.controls['step']" [showError]="submitted">
+                    <select name="step" id="step" formControlName="step" title="Step Reference" [(ngModel)]="step"
+                    data-test="AddEditFormFields_StepSelect">
+                        <option *ngFor="let step of existingForm.steps" [ngValue]="step.value" [attr.data-test]="'AddEditFormFields_StepSelect' + step.name">{{step.name}}</option>
+                    </select>
+                </snap-input-wrapper>
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <h4 class="margin-bottom">Is Stacked</h4>
+                <fieldset>
+                    <ul class="alternate-radios" data-test="AddEditFormFields_IsStacked">
+                        <li>
+                            <input type="radio" name="isStacked" id="isStackedTrue" formControlName="isStacked" [value]="true" [(ngModel)]="isStackedSelection" data-test="'AddEditFormFields_IsStacked_true'">
+                            <label for="isStackedTrue" data-test="'AddEditFormFields_IsStacked_true_Label'">
+                                Yes
+                            </label>
+                        </li>
+                        <li>
+                            <input type="radio" name="isStacked" id="isStackedFalse" formControlName="isStacked" [value]="false" [(ngModel)]="isStackedSelection" data-test="'AddEditFormFields_IsStacked_false'">
+                            <label for="isStackedFalse" data-test="'AddEditFormFields_IsStacked_false_Label'">
+                                No
+                            </label>
+                        </li>
+                    </ul>
+                </fieldset>
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <h4 class="margin-bottom">Is Disabled</h4>
+                <fieldset>
+                    <ul class="alternate-radios" data-test="AddEditFormFields_IsDisabled">
+                        <li>
+                            <input type="radio" name="isDisabled" id="isDisabledTrue" formControlName="isDisabled" [value]="true" [(ngModel)]="isDisabledSelection" data-test="'AddEditFormFields_IsDisabled_true'">
+                            <label for="isDisabledTrue" data-test="'AddEditFormFields_IsDisabled_true_Label'">
+                                Yes
+                            </label>
+                        </li>
+                        <li>
+                            <input type="radio" name="isDisabled" id="isDisabledFalse" formControlName="isDisabled" [value]="false" [(ngModel)]="isDisabledSelection" data-test="'AddEditFormFields_IsDisabled_false'">
+                            <label for="isDisabledFalse" data-test="'AddEditFormFields_IsDisabled_false_Label'">
+                                No
+                            </label>
+                        </li>
+                    </ul>
+                </fieldset>
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <h4 class="margin-bottom">Is File List Shown</h4>
+                <fieldset>
+                    <ul class="alternate-radios" data-test="AddEditFormFields_IsFileListShown">
+                        <li>
+                            <input type="radio" name="isFileListShown" id="isFileListShownTrue" formControlName="isFileListShown" [value]="true" [(ngModel)]="isFileListShownSelection" data-test="'AddEditFormFields_IsFileListShown_true'">
+                            <label for="isFileListShownTrue" data-test="'AddEditFormFields_IsFileListShown_true_Label'">
+                                Yes
+                            </label>
+                        </li>
+                        <li>
+                            <input type="radio" name="isFileListShown" id="isFileListShownFalse" formControlName="isFileListShown" [value]="false" [(ngModel)]="isFileListShownSelection" data-test="'AddEditFormFields_IsFileListShown_false'">
+                            <label for="isFileListShownFalse" data-test="'AddEditFormFields_IsFileListShown_false_Label'">
+                                No
+                            </label>
+                        </li>
+                    </ul>
+                </fieldset>
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <label for="maxFileSize">Max File Size</label>
+                <input formControlName="maxFileSize" type="number" class="form-control" id="maxFileSize" name="maxFileSize"
+                       title="Max File Size" [(ngModel)]="maxFileSize"  data-test="AddEditFormFields_MaxFileSize">
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <label for="maxUploads">Max Uploads</label>
+                <input formControlName="maxUploads" type="number" class="form-control" id="maxUploads" name="maxUploads"
+                       title="Max Uploads" [(ngModel)]="maxUploads"  data-test="AddEditFormFields_MaxUploads">
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <label for="templateId">Template Id</label>
+                <input formControlName="templateId" type="text" class="form-control" id="templateId" name="templateId"
+                       title="Template Id" [(ngModel)]="templateId"  data-test="AddEditFormFields_TemplateId">
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <label for="listClasses">List classes</label>
+                <input formControlName="listClasses" type="text" class="form-control" id="listClasses" name="listClasses"
+                       title="List Classes" [(ngModel)]="listClasses"  data-test="AddEditFormFields_ListClasses">
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <label for="baseUrl">Base URL</label>
+                <snap-input-wrapper [control]="addEditFormField.controls['baseUrl']" [showError]="submitted">
+                    <input formControlName="baseUrl" type="text" class="form-control" id="baseUrl" name="baseUrl"
+                           title="Base URL" [(ngModel)]="baseUrl"  data-test="AddEditFormFields_BaseURL">
+                </snap-input-wrapper>
+            </li>
+            <li [hidden]="selectedControlType !== 'fileupload'">
+                <label for="acceptedFileType">Accepted File Type</label>
+                <input formControlName="acceptedFileType" type="text" class="form-control" id="acceptedFileType" name="acceptedFileType"
+                       title="Accepted File Type" [(ngModel)]="acceptedFileType"  data-test="AddEditFormFields_AcceptedFileType">
+            </li>
+            <li [hidden]="selectedControlType !== 'header'">
+                <label for="colspanDropdown">Colspan</label>
+                <select name="colspanDropdown" id="colspanDropdown" formControlName="colSpan" title="Colspan" data-test="AddEditFormFields_ColSpanSelect">
+                    <option *ngFor="let colSpan of colSpanList" [ngValue]="colSpan.value" [attr.data-test]="'AddEditFormFields_ColSpanSelect' + colSpan.name">{{colSpan.name}}</option>
+                </select>
+            </li>
+        </ul>
+        <div class="button-row padding-right">
+            <button type="button" class="primary-button" (click)="addEditField()" [hidden]="isEditing" data-test="AddEditFormFields_SaveButton0">Save</button>
+            <button type="button" class="primary-button" (click)="addEditField(true)" [hidden]="!isEditing" data-test="AddEditFormFields_SaveButton1">Save</button>
+            <button class="cancel-button gray-bg-tint-95" (click)="cancelEditing()" [hidden]="!isEditing" data-test="AddEditFormFields_CancelEditButton">
+                <span class="icon"></span>
+                Cancel
+            </button>
+        </div>
+</form>

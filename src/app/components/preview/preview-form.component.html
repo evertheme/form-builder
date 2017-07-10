@@ -1,0 +1,23 @@
+<snap-form-errors [forms]="[form]" *ngIf="submitted" (onTitleClicked)="fieldFocus($event.form, $event.name)"></snap-form-errors>
+
+<div class="lightbox-body" data-test="viewFormLayoutModal">
+    <dynamic-form-layout-view
+        *ngIf="existingForm"
+        [existingForm]="existingForm"
+        [fields]="fields"
+        [form]="form"
+        [callbackFunc]="callbackFunc"
+        [submitted]="submitted"
+        [(currentStep)]="currentStep">
+    </dynamic-form-layout-view>
+</div>
+
+<div class="button-row" data-test="PreviewForm_FormButtons">
+    <button *ngFor="let button of existingForm?.formButtons; let i = index"
+            [hidden]="button.type === 'Primary' && existingForm?.formType === 'wizard' && (currentStep !== existingForm?.steps?.length || this.hasCustomStep)"
+            (click)="callbackFunc[button.callbackFunc]()"
+            [ngClass]="getButtonClass(button.type)" [attr.data-test]="'PreviewForm_FormButton_' + i">
+        <span class="icon" *ngIf="button.type === 'Cancel'"></span>
+        {{button.value}}
+    </button>
+</div>

@@ -1,0 +1,7 @@
+src/app/**/*.js
+src/app/**/*.js.map
+src/main.js
+src/main.js.map
+src/dist/
+documentation
+coverage/

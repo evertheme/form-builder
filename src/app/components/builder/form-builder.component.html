@@ -1,0 +1,74 @@
+<div class="white-bg padding-all height-100-percent">
+    <ol class="breadcrumbs margin-left">
+        <li>
+            <a href="javascript:;" [routerLink]="['/form-list']">
+                Form Builder
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;" [routerLink]="['/form-list']">
+                Form: {{existingForm?.formName}} , Type: {{existingForm?.formType}}, Layout: {{existingForm?.formLayout}}
+            </a>
+        </li>
+    </ol>
+    <div class="row padding-top padding-bottom">
+        <div class="col-xs-16 col-sm-5 padding-left">
+            <h2>
+                Field Setup
+            </h2>
+        </div>
+
+        <div class="col-xs-16 col-sm-8 text-light text-size-50 padding-top padding-left">
+            Form fields adapt to the width of their container; therefore, your fields will not show at their final size until added to the appropriately sized parent wrapper.
+        </div>
+
+        <div class="col-xs-16 col-sm-3 padding-right">
+            <button type="button" id="preview" class="secondary-button float-right launch-lightbox" (click)="goToPreview()" data-test="FormBuilder_PreviewForm">
+                <span class="fa fa-eye"></span>
+                Preview Form
+            </button>
+        </div>
+    </div>
+    <div class="row height-88-percent">
+        <div class="col-xs-16 col-sm-5 padding-all height-100-percent display-flex">
+            <div class="gray-rounded-content-box stacked-form padding-all overflow-scroll" *ngIf="existingForm" data-test="FormBuilder_AddEditFormFields">
+                <add-edit-form-fields
+                    [existingForm]="existingForm"
+                    (onSave)="save($event.formData, $event.update)"
+                    (onDeleteField)="deleteField($event)">
+                </add-edit-form-fields>
+            </div>
+        </div>
+
+        <div class="col-xs-16 col-sm-11 padding-all" *ngIf="existingForm" data-test="FormBuilder_FormLayout">
+            <dynamic-form-layout
+                [existingForm]="existingForm"
+                [form]="form"
+                [fields]="fields"
+                [callbackFunc]="callbackFunc"
+                (onDeleteField)="openConfirmation($event)"
+                (onEditField)="editField($event)"
+                (onReOrderField)="reOrderField()">
+            </dynamic-form-layout>
+        </div>
+    </div>
+</div>
+
+<snap-lightbox-container>
+    <snap-confirmation-box
+        boxId="removeFieldConfirmation"
+        boxTitle="Remove Field"
+        boxType="action"
+        (onYesOk)="deleteField()">
+        Are you sure you want to remove this field?
+    </snap-confirmation-box>
+
+    <snap-light-box boxId="preview-form-modal" boxTitle="Form Preview" boxType="right" rightClass="col-xs-16 col-sm-12 col-md-9 col-lg-8">
+        <template>
+            <preview-form
+                modalId="preview-form-modal"
+                [formId]="existingForm?._id">
+            </preview-form>
+        </template>
+    </snap-light-box>
+</snap-lightbox-container>

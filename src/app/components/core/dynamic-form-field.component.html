@@ -1,0 +1,130 @@
+<label [attr.for]="field.key" *ngIf="getIsLabel(field.controlType, field.hidden)" data-test="Field_Label">
+    {{field.label}}
+    <abbr title="required" *ngIf="isRequired()">*</abbr>
+</label>
+
+<div [ngSwitch]="field.controlType" data-test="Field_ControlType" *ngIf="!field.hidden || showHidden" [formGroup]="form">
+    <div *ngSwitchCase="'header'">
+        <h4 class="text-dk-blue margin-top-2x" data-test="Field_HeaderLabel">{{field.label}}</h4>
+    </div>
+
+    <div *ngSwitchCase="'textbox'">
+        <snap-input-wrapper [control]="form.controls[field.key]" [showError]="submitted">
+            <input [type]="field.type" [formControlName]="field.key" [id]="field.key" [title]="field.title" [name]="field.key"
+                   class="width-100-percent" [(ngModel)]="field.model"
+                   [placeholder]="field.hasPlaceholderText === true ? field.placeholderText : ''" data-test="Field_ControlType_Textbox"/>
+        </snap-input-wrapper>
+    </div>
+
+    <div *ngSwitchCase="'checkbox'">
+        <label>&nbsp;</label>
+        <label [attr.for]="field.key">
+            <input
+                [title]="field.title"
+                [name]="field.key"
+                [formControlName]="field.key"
+                [id]="field.key"
+                [(ngModel)]="field.model"
+                type="checkbox"
+                data-test="Field_ControlType_Checkbox"> {{field.options[0]?.value}}
+        </label>
+    </div>
+
+    <div *ngSwitchCase="'checkboxes'">
+        <label [attr.for]="field.key + i" *ngFor="let option of field.options; let i = index">
+            <input
+                [name]="field.key + i"
+                [formControlName]="field.key"
+                [id]="field.key + i"
+                [(ngModel)]="option.key"
+                type="checkbox"
+                [attr.data-test]="'Field_ControlType_Checkboxes' + i"> {{option.value}}
+        </label>
+    </div>
+
+    <div *ngSwitchCase="'radio'">
+        <ul class="alternate-radios" data-test="Field_ControlType_Radio" [hidden]="field.stacked">
+            <li *ngFor="let option of field.options; let i = index">
+                <input type="radio" [name]="field.key" [id]="field.key + i" [formControlName]="field.key" [value]="option.key" [(ngModel)]="field.model" [attr.data-test]="'Field_ControlType_RadioOption_' + i"/>
+                <label [attr.for]="field.key + i" class="margin-bottom-none">{{option.value}}</label>
+            </li>
+        </ul>
+        <ul class="reset-list" data-test="Field_ControlType_Radio" [hidden]="!field.stacked">
+            <li class="margin-bottom-2x height-auto" *ngFor="let option of field.options; let i = index">
+                <input type="radio" [name]="field.key" [id]="field.key + i" [formControlName]="field.key" [value]="option.key" [(ngModel)]="field.model" [attr.data-test]="'Field_ControlType_RadioOption_' + i" />
+                <label [attr.for]="field.key + i" class="display-inline-block">
+                    {{option.value}}
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <div *ngSwitchCase="'dropdown'">
+        <snap-input-wrapper [control]="form.controls[field.key]" [showError]="submitted">
+            <select [id]="field.key" [name]="field.key" [title]="field.title" [formControlName]="field.key" (ngModelChange)="field.model = $event; callbackFunc[field.onModelChange](field.model)" [ngModel]="field.model" data-test="Field_ControlType_Dropdown">
+                <option *ngFor="let opt of field.options; let i = index" [value]="opt.key" [attr.data-test]="'Field_ControlType_DropdownOption_' + i">{{opt.value}}</option>
+            </select>
+        </snap-input-wrapper>
+    </div>
+
+    <div *ngSwitchCase="'combobox'">
+        <div class="input-group">
+            <snap-input-wrapper [control]="form.controls[field.key]" [showError]="submitted">
+                <snap-combo-box
+                    [title]="field.title" [name]="field.key" [minLength]="2" match="force"
+                    [formControlName]="field.key"
+                    [lookupFunction]="callbackFunc[field.lookupFunction]"
+                    (ngModelChange)="field.model = $event; callbackFunc[field.onModelChange](field.model)"
+                    [resultFields]="field.resultFields"
+                    [ngModel]="field.model"
+                    data-test="Field_ControlType_Combobox">
+                    <a href="javascript:;" class="group-button cursor-pointer"
+                       (click)="callbackFunc[field.openLookupModal](field.model)" data-direction='right' data-test="Field_ControlType_Combobox_LookupModal">
+                        <span class="fa fa-search"></span>
+                    </a>
+                </snap-combo-box>
+            </snap-input-wrapper>
+        </div>
+    </div>
+
+    <div *ngSwitchCase="'datepicker'">
+        <div class="input-group">
+            <input type="text" [formControlName]="field.key" [id]="field.key" [title]="field.title" [name]="field.key" [(ngModel)]="field.model" data-test="Field_ControlType_DatepickerInput"/>
+            <a href="javascript:;" class="group-button cursor-pointer" (click)="displayDatePicker[field.key] = !displayDatePicker[field.key];">
+                <span class="fa fa-calendar"></span>
+            </a>
+        </div>
+        <div *ngIf="displayDatePicker[field.key]" class="date-picker-container" style="position: absolute; top: 2.2em; right: 0; width: 200px; z-index: 400;"  data-test="Field_ControlType_DatepickerPopup">
+            <datepicker
+                [(ngModel)]="field.model"
+                [ngModelOptions]="{standalone: true}"
+                (selectionDone)="displayDatePicker[field.key] = false">
+            </datepicker>
+        </div>
+    </div>
+
+    <div *ngSwitchCase="'textarea'">
+        <snap-input-wrapper [control]="form.controls[field.key]" [showError]="submitted">
+                    <textarea [formControlName]="field.key" [id]="field.key" [name]="field.key"  data-test="Field_ControlType_Textarea"
+                              [title]="field.title" [(ngModel)]="field.model"  [placeholder]="field.placeholderText" [ngClass]="field.numRows === 2 ? 'height-2-rows' : 'height-3-rows'"></textarea>
+        </snap-input-wrapper>
+    </div>
+
+    <div *ngSwitchCase="'fileupload'">
+        <snap-file-upload
+            [isStacked]="field.isStacked"
+            [maxFileSize]="field.maxFileSize"
+            [maxUploads]="field.maxUploads"
+            [isFileListShown]="field.isFileListShown"
+            [isDisabled]="field.isDisabled"
+            [templateId]="field.templateId"
+            [listClasses]="field.listClasses"
+            [baseUrl]="field.baseUrl"
+            [acceptedFileType]="field.acceptedFileType">
+        </snap-file-upload>
+    </div>
+
+    <div *ngSwitchCase="'blank'"></div>
+</div>
+
+<span class="field-help-text" [hidden]="(field.controlType !== 'textbox' || field.controlType !== 'dropdown') && !field.hasHelperText"  data-test="Field_ControlType_HelperText">{{field.helperText}}</span>
